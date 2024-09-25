@@ -52,7 +52,7 @@ class BinarySearchTree:
     ind: a number between 0 and n-1 (the number of nodes/objects)
     returns BinarySearchTree/Node or None
     '''
-    def select(self, ind):
+    def select(self, ind): # Wrong
         left_size = 0
         if self.left is not None:
             left_size = self.left.size
@@ -61,7 +61,7 @@ class BinarySearchTree:
         if left_size > ind and self.left is not None:
             return self.left.select(ind)
         if left_size < ind and self.right is not None:
-            return self.right.select(ind)
+            return self.right.select(ind-left_size-1) # Adjust index
         return None
 
 
@@ -69,7 +69,7 @@ class BinarySearchTree:
     Searches for a given key
     returns a pointer to the object with target key or None (Roughgarden)
     '''
-    def search(self, key):
+    def search(self, key): # Correct
         if self is None:
             return None
         elif self.key == key:
@@ -88,18 +88,21 @@ class BinarySearchTree:
     
     returns the original (top level) tree - allows for easy chaining in tests
     '''
-    def insert(self, key):
+
+
+    def insert(self, key): # Too slow
         if self.key is None:
             self.key = key
         elif self.key > key: 
             if self.left is None:
                 self.left = BinarySearchTree(self.debugger)
             self.left.insert(key)
+            self.size += 1 # Adjust size of node
         elif self.key < key:
             if self.right is None:
                 self.right = BinarySearchTree(self.debugger)
             self.right.insert(key)
-        self.calculate_sizes()
+            self.size += 1 # Adjust size of node
         return self
 
     
@@ -128,6 +131,47 @@ class BinarySearchTree:
     '''
     def rotate(self, direction, child_side):
         # Your code goes here
+        if child_side == "R":
+            temp1 = self.right
+            if direction == "L":
+                self.right = self.right.right
+                self.right.size += 1
+                if temp1.left is not None: self.right.size += temp1.left.size
+                temp2 = self.right.left
+                self.right.left = temp1
+                self.right.left.right = temp2
+                self.right.left.size -= self.right.size
+                if self.right.left.right is not None: self.right.left.size += self.right.left.right.size
+            elif direction == "R":
+                self.right = self.right.left
+                self.right.size += 1
+                if temp1.right is not None: self.right.size += temp1.right.size
+                temp2 = self.right.right
+                self.right.right = temp1
+                self.right.right.left = temp2
+                self.right.right.size -= self.right.size
+                if self.right.right.left is not None: self.right.right.size += self.right.right.left.size
+        elif child_side == "L":
+            temp1 = self.left
+            if direction == "L":
+                self.left = self.left.right
+                self.left.size += 1
+                if temp1.left is not None: self.left.size += temp1.left.size
+                temp2 = self.left.left
+                self.left.left = temp1
+                self.left.left.right = temp2
+                self.left.left.size -= self.left.size
+                if self.left.left.right is not None: self.left.left.size += self.left.left.right.size
+            elif direction == "R":
+                self.left = self.left.left
+                self.left.size += 1
+                if temp1.right is not None: self.left.size += temp1.right.size
+                temp2 = self.left.right
+                self.left.right = temp1
+                self.left.right.left = temp2
+                self.left.right.size -= self.left.size
+                if self.left.right.left is not None: self.left.right.size += self.left.right.left.size
+
         return self
 
     def print_bst(self):
