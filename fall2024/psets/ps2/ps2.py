@@ -135,42 +135,42 @@ class BinarySearchTree:
             temp1 = self.right
             if direction == "L":
                 self.right = self.right.right
-                self.right.size += 1
-                if temp1.left is not None: self.right.size += temp1.left.size
                 temp2 = self.right.left
                 self.right.left = temp1
                 self.right.left.right = temp2
                 self.right.left.size -= self.right.size
                 if self.right.left.right is not None: self.right.left.size += self.right.left.right.size
+                self.right.size += 1
+                if temp1.left is not None: self.right.size += temp1.left.size
             elif direction == "R":
                 self.right = self.right.left
-                self.right.size += 1
-                if temp1.right is not None: self.right.size += temp1.right.size
                 temp2 = self.right.right
                 self.right.right = temp1
                 self.right.right.left = temp2
                 self.right.right.size -= self.right.size
                 if self.right.right.left is not None: self.right.right.size += self.right.right.left.size
+                self.right.size += 1
+                if temp1.right is not None: self.right.size += temp1.right.size
         elif child_side == "L":
             temp1 = self.left
             if direction == "L":
                 self.left = self.left.right
-                self.left.size += 1
-                if temp1.left is not None: self.left.size += temp1.left.size
                 temp2 = self.left.left
                 self.left.left = temp1
                 self.left.left.right = temp2
                 self.left.left.size -= self.left.size
                 if self.left.left.right is not None: self.left.left.size += self.left.left.right.size
+                self.left.size += 1
+                if temp1.left is not None: self.left.size += temp1.left.size
             elif direction == "R":
                 self.left = self.left.left
-                self.left.size += 1
-                if temp1.right is not None: self.left.size += temp1.right.size
                 temp2 = self.left.right
                 self.left.right = temp1
                 self.left.right.left = temp2
                 self.left.right.size -= self.left.size
                 if self.left.right.left is not None: self.left.right.size += self.left.right.left.size
+                self.left.size += 1
+                if temp1.right is not None: self.left.size += temp1.right.size
 
         return self
 
