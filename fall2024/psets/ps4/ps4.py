@@ -23,9 +23,9 @@ random.seed(120)
 '''
 A Las Vegas Algorithm to find a key-value pair (Ij, Kj) such that Kj is an i’th smallest key.
 arr: a list of key-value pair tuples
-    e.g. [(K0, V0), (K1, V1), ..., (Ki, Vi), ..., (Kn, Vn)] 
+    e.g. [(K0, V0), (K1, V1), ..., (Ki, Vi), ..., (Kn, Vn)]
     ... in this problem set, the values are irrelevant
-i: an integer [0, n-1] 
+i: an integer [0, n-1]
 returns: An key-value pair (Kj, Vj) such that Kj is an i’th smallest key.
 '''
 
@@ -33,20 +33,28 @@ returns: An key-value pair (Kj, Vj) such that Kj is an i’th smallest key.
 def QuickSelect(arr, i):
     # Your code here
 
-    # Feel free to use get_random_index(arr) or get_random_int(start_inclusive, end_inclusive)
-    # ... see the helper functions below
-    pass
-    return (0, -1)
+    if len(arr) == 1:
+        return arr[0]
+    pivot = arr[random.randint(0,len(arr)-1)][0]
+    smaller = [j for j in arr if j[0]<pivot]
+    larger  = [j for j in arr if j[0]>pivot]
+    equal = [j for j in arr if j[0]==pivot]
+    if len(smaller) > i:
+        return QuickSelect(smaller, i)
+    elif len(smaller)+len(equal) <= i:
+        return QuickSelect(larger, i-len(smaller)-len(equal))
+    else:
+        return equal[0]
 
 
 '''
 Uses MergeSort to resolve a number of queries where each query is to find an key-value pair (Kj, Vj) such that Kj is an i’th smallest key.
 arr: a list of key-value pair tuples
-    e.g. [(K0, V0), (K1, V1), ..., (Ki, Vi), ..., (Kn, Vn)] 
+    e.g. [(K0, V0), (K1, V1), ..., (Ki, Vi), ..., (Kn, Vn)]
     ... in this problem set, the values are irrelevant
-query_list (aka i_arr): a list of integers [0, n-1] 
+query_list (aka i_arr): a list of integers [0, n-1]
 returns: An list of key-value pairs such that for each query qi, the i'th element in the returned list is (Kj, Vj) such that Kj is an i’th smallest key.
-NOTE: This is different from the QuickSelect definition. This function takes in a set of queries and returns a list corresponding to their results. 
+NOTE: This is different from the QuickSelect definition. This function takes in a set of queries and returns a list corresponding to their results.
     ... this is to properly benchmark for the experiments. We only want to run MergeSort once and then use that one result to resolve all queries.
 '''
 
@@ -54,9 +62,9 @@ NOTE: This is different from the QuickSelect definition. This function takes in 
 def MergeSortSelect(arr, query_list):
     # Only call MergeSort once
     # ... MergeSort has already been implemented for you (see below)
-    pass
-    return [(0, -1)] * len(query_list)  # replace this line with your return
+    sorted = MergeSort(arr)
 
+    return [sorted[i] for i in query_list]
 
 ##################################
 #                                #
@@ -67,7 +75,7 @@ def MergeSortSelect(arr, query_list):
 
 def experiments():
     # Edit this parameter
-    k = [1, 1, 1, 1, 1]
+    k = [23,25,28,29,30]
 
     # Feel free to edit these initial parameters
 
@@ -214,7 +222,7 @@ def merge(arr1, arr2):
 '''
 A deterministic sorting algorithm
 arr: a list of Key-Value pair tuples
-    e.g. [(K0, V0), (K1, V1), ..., (Ki, Vi), ..., (Kn, Vn)] 
+    e.g. [(K0, V0), (K1, V1), ..., (Ki, Vi), ..., (Kn, Vn)]
 returns: a sorted list, sorted according to keys
 '''
 
