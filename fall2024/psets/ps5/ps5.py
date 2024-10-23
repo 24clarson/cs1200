@@ -167,7 +167,17 @@ def bfs_2_coloring(G, precolored_nodes=None):
     
     # TODO: Complete this function by implementing two-coloring using the colors 0 and 1.
     # If there is no valid coloring, reset all the colors to None using G.reset_colors()
-    
+    for v in range(G.N):
+        if G.colors[v] is not None:
+            continue
+        F = [v]
+        for d in range(G.N):
+            for i in F:
+                G.colors[i] = d%2
+            visited.update(F)
+            F = [j for f in F for j in G.edges[f] if j not in visited]
+    if G.is_graph_coloring_valid():
+        return G.colors
     G.reset_colors()
     return None
 
@@ -188,11 +198,15 @@ def bfs_2_coloring(G, precolored_nodes=None):
 def iset_bfs_3_coloring(G):
     # TODO: Complete this function.
 
-    G.reset_colors()
+    for mset in get_maximal_isets(G):
+        G.reset_colors()
+        bfs_2_coloring(G, mset)
+        if G.is_graph_coloring_valid():
+            return G.colors
     return None
 
 # Feel free to add miscellaneous tests below!
 if __name__ == "__main__":
-    G0 = Graph(2).add_edge(0, 1)
+    G0 = Graph(2).add_edge(0,1)
     print(bfs_2_coloring(G0))
     print(iset_bfs_3_coloring(G0))
