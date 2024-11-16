@@ -17,14 +17,14 @@ class Graph:
         self.N = N
         self.edges = [set(lst) for lst in edges] if edges is not None else [set() for _ in range(N)]
         self.colors = [c for c in colors] if colors is not None else [None for _ in range(N)]
-    
+
     # Adds a node to the end of the list
     # Returns resulting graph
     def add_node(self):
         self.N += 1
         self.edges.append(set())
         return self
-    
+
     # Adds an undirected edge from u to v
     # Returns resulting graph
     def add_edge(self, u, v):
@@ -63,7 +63,7 @@ class Graph:
             g = g.add_edge(g1u, g2v + g1.N)
         return g
 
-    # Checks if a given subset of nodes is an independent set 
+    # Checks if a given subset of nodes is an independent set
     def is_independent_set(self, subset):
         for v in subset:
             for u in self.edges[v]:
@@ -83,7 +83,7 @@ class Graph:
                 # Make sure colors on each edge are different
                 if self.colors[u] == self.colors[v]:
                     return False
-        
+
         return True
 
 '''
@@ -155,7 +155,7 @@ def bfs_2_coloring(G, precolored_nodes=None):
                             G.colors[v] = 1 - G.colors[u]
                             visited.add(v)
                 frontier = new_frontier
-    
+
     return G.colors
 
 '''
@@ -177,7 +177,7 @@ def bron_kerbosch_max_indep_set(G, R, P, X):
         new_P = P.intersection(set(range(G.N)).difference(neighbors))
         new_X = X.intersection(set(range(G.N)).difference(neighbors))
         yield from bron_kerbosch_max_indep_set(G, R.union({vertex}), new_P, new_X)
-        
+
         P.remove(vertex)
         X.add(vertex)
 
@@ -193,7 +193,7 @@ def iset_bfs_3_coloring(G):
     return None
 
 '''
-    Part A: Implement the reduction to SAT. 
+    Part A: Implement the reduction to SAT.
     Here, you should use the SAT solver that we've defined to add clauses, and use the built-in get_model function
     to find the solution if one exists.
     Link to documentation: https://pysathq.github.io/docs/html/api/solvers.html#pysat.solvers.Solver.get_model
@@ -211,7 +211,15 @@ def iset_bfs_3_coloring(G):
 def sat_3_coloring(G):
     solver = Glucose3()
 
-    # TODO: Add the clauses to the solver
+    for i in range(G.N):
+        solver.add_clause([3*i+1, 3*i+2, 3*i+3])
+
+    for i in range(G.N):
+        for e in G.edges[i]:
+            if e < i:
+                continue
+            for j in range(1,4):
+                solver.add_clause([-3*i-j, -3*e-j])
 
     # Attempt to solve, return None if no solution possible
     if not solver.solve():
@@ -222,6 +230,9 @@ def sat_3_coloring(G):
     solution = solver.get_model()
 
     # TODO: If a solution is found, convert it into a coloring and update G.colors
+    for i in solution:
+        if i > 0:
+            G.colors[(i-1)//3] = (i-1)%3
 
     return G.colors
 
